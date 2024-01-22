@@ -16,5 +16,6 @@ public class UserServices {
 
     public void register(String name,String passw){
         dao.register(name,passw);
+        dao.crearClavesUsuario();
     }
 }

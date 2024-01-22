@@ -10,18 +10,13 @@ import lombok.Setter;
 @Table(name = "Visualizadores")
 public class Visualizadores {
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "id", nullable = false)
     private int id;
     @Column(name = "nombre", nullable = false)
     private String nombre;
-
-    @Column(name = "firma", nullable = false)
-    private String firma;
-    @Column(name = "claveAsimetrica")
-    private String claveAsimetrica;
     @ManyToOne
-    @JoinColumn(name = "id")
+    @JoinColumn(name = "id_recursos")
     private Recursos recursos;
 
 

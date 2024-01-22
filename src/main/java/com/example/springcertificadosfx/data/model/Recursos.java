@@ -12,17 +12,12 @@ import java.util.List;
 @Table(name = "Recursos")
 public class Recursos {
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    @Column(name = "id", nullable = false)
-    private int id;
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(name = "id_recursos", nullable = false)
+    private int id_recursos;
     @Column(name = "nombre", nullable = false)
     private String nombre;
 
-    @Column(name = "password", nullable = false)
-    private String password;
-
-    @Column(name = "firma", nullable = false)
-    private String firma;
     @OneToMany(mappedBy = "recursos")
     private List<Visualizadores> visualizadores;
 }

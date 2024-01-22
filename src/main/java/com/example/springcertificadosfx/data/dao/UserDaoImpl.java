@@ -24,4 +24,19 @@ public class UserDaoImpl implements UserDao{
                 .param(2, password)
                 .update();
     }
+
+    @Override
+    public void crearClavesUsuario() {
+
+    }
+
+    @Override
+    public String getPrivateKey(String password) {
+        return null;
+    }
+
+    @Override
+    public String getCertificado(String clavePublica) {
+        return null;
+    }
 }
