@@ -1,6 +1,7 @@
 package com.example.springcertificadosfx.ui;
 
 
+import com.example.springcertificadosfx.common.Constantes;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.layout.BorderPane;
@@ -27,7 +28,7 @@ public class PrincipalController {
 
     public void initialize() {
 
-        cargarPantalla("/fxml/registerScreen.fxml");
+        cargarPantalla(Constantes.FXML_REGISTER_SCREEN_FXML);
     }
 
     private Pane cargarPantalla(String ruta) {

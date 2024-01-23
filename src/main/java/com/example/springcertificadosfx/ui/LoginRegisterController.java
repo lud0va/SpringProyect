@@ -1,6 +1,7 @@
 package com.example.springcertificadosfx.ui;
 
 import com.example.springcertificadosfx.servicios.UserServices;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.StackPane;
@@ -16,7 +17,7 @@ public class LoginRegisterController {
     @FXML
     public TextField txtUser;
     @FXML
-    public StackPane txtPassword;
+    public TextField txtPassword;
 
     public LoginRegisterController(ApplicationContext context, UserServices services) {
         this.context = context;
@@ -24,12 +25,10 @@ public class LoginRegisterController {
     }
 
 
+    public void login(ActionEvent event) {
+    }
 
-
-
-
-
-
-
-
+    public void register(ActionEvent event) {
+        services.register(txtUser.getText(),txtPassword.getText());
+    }
 }
