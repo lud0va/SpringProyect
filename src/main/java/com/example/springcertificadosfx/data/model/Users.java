@@ -20,4 +20,9 @@ public class Users {
 
     @Column(name = "password", nullable = false)
     private String password;
+
+    public Users(String username, String password) {
+        this.username = username;
+        this.password = password;
+    }
 }

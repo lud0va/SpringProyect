@@ -1,6 +1,12 @@
 package com.example.springcertificadosfx.data.dao;
 
-public interface VisualizadoresDao {
-  String getClaveVisualizador(String claveUsuario);
+import com.example.springcertificadosfx.data.model.Visualizadores;
+import org.springframework.data.repository.ListCrudRepository;
+import org.springframework.stereotype.Repository;
+
+@Repository
+public interface VisualizadoresDao extends ListCrudRepository<Visualizadores,Long> {
+  @Override
+  public Visualizadores save(Visualizadores entity);
 
 }

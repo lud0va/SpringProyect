@@ -1,8 +1,12 @@
 package com.example.springcertificadosfx.data.dao;
 
-public interface RecursosDao {
+import com.example.springcertificadosfx.data.model.Recursos;
+import org.springframework.data.repository.ListCrudRepository;
+import org.springframework.stereotype.Repository;
 
-    boolean crearRecurso(String nombreRecurso,String descr,String nombreUsuario,String claveVisualizador);
+@Repository
+public interface RecursosDao extends ListCrudRepository<Recursos,Long> {
 
-
+    @Override
+    Recursos save(Recursos entity);
 }
