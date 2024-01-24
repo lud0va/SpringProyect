@@ -18,6 +18,9 @@ public class Recursos {
     @Column(name = "nombre", nullable = false)
     private String nombre;
 
-    @OneToMany(mappedBy = "recursos")
-    private List<Visualizadores> visualizadores;
+    @Column(name = "descripcion")
+    private String descripcion;
+    @ManyToOne
+    @JoinColumn(name = "id_user")
+    private Users users;
 }

@@ -5,7 +5,19 @@
 
 <BorderPane fx:id="root" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/17.0.2-ea"
             xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.springcertificadosfx.ui.PrincipalController">
+    <center>
+        <AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/17.0.2-ea"
+                    xmlns:fx="http://javafx.com/fxml/1">
+           <children>
 
+                <TextField fx:id="txtUser" layoutX="200.0" layoutY="121.0" promptText="Username"/>
+                <TextField fx:id="txtPassword" layoutX="201.0" layoutY="187.0" promptText="Password"/>
+                <Button layoutX="139.0" layoutY="256.0" mnemonicParsing="false" onAction="#login" text="Login"/>
+                <Button layoutX="354.0" layoutY="256.0" mnemonicParsing="false" onAction="#register" text="Register"/>
+            </children>
+
+        </AnchorPane>
+    </center>
 
     <top>
         <MenuBar fx:id="menuPrincipal">

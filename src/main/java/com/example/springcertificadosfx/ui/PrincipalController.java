@@ -2,8 +2,11 @@ package com.example.springcertificadosfx.ui;
 
 
 import com.example.springcertificadosfx.common.Constantes;
+import com.example.springcertificadosfx.servicios.UserServices;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 
@@ -19,16 +22,22 @@ public class PrincipalController {
     private final ApplicationContext context;
     @FXML
     public BorderPane root;
+    @FXML
+    public TextField txtUser;
+    @FXML
+    public TextField txtPassword;
+    private final UserServices services;
 
-    public PrincipalController( ApplicationContext context) {
+    public PrincipalController(ApplicationContext context, UserServices services) {
 
         this.context = context;
+        this.services = services;
     }
 
 
     public void initialize() {
 
-        cargarPantalla(Constantes.FXML_REGISTER_SCREEN_FXML);
+
     }
 
     private Pane cargarPantalla(String ruta) {
@@ -47,4 +56,14 @@ public class PrincipalController {
         return panePantalla;
     }
 
+    public void login(ActionEvent event) {
+        if (services.login(txtUser.getText(), txtPassword.getText())){
+            cargarPantalla(Constantes.FXML_REGISTER_SCREEN_FXML);
+        }
+    }
+
+    public void register(ActionEvent event) {
+        services.register(txtUser.getText(), txtPassword.getText());
+
+    }
 }

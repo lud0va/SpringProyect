@@ -1,92 +1,82 @@
 package com.example.springcertificadosfx.data.dao.crearClave;
 
+import com.example.springcertificadosfx.Configuration;
 import com.example.springcertificadosfx.Utils;
-import org.bouncycastle.asn1.ASN1Sequence;
-import org.bouncycastle.asn1.x500.X500Name;
-import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo;
-import org.bouncycastle.cert.X509v3CertificateBuilder;
-import org.bouncycastle.jce.provider.BouncyCastleProvider;
+import jakarta.inject.Inject;
+import org.bouncycastle.x509.X509V3CertificateGenerator;
 import org.springframework.stereotype.Repository;
 
+import javax.security.auth.x500.X500Principal;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.math.BigInteger;
 import java.security.*;
 import java.security.cert.CertificateException;
-import java.util.Date;
+import java.security.cert.X509Certificate;
 
 @Repository
 public class DaoClavesCert {
-    public void crearClaveAsim(String username,String passwrd) {
+    private final Configuration co;
+
+    @Inject
+    public DaoClavesCert(Configuration co) {
+
+        this.co = co;
+    }
+
+    public void crearClaveAsim(String username, String passwrd) {
         try {
+
             KeyPairGenerator gen = KeyPairGenerator.getInstance(Utils.randomBytes());
             KeyPair claveBase64 = gen.generateKeyPair();
             PrivateKey clavePriv = claveBase64.getPrivate();
-            char[] keystorePassword = passwrd.toCharArray();
-            String alias = username+"mykey"; // Alias para identificar la clave en el KeyStore
+            PublicKey clavePub = claveBase64.getPublic();
 
-            KeyStore keyStore = KeyStore.getInstance("JKS");
-            keyStore.load(null, keystorePassword);
+            X509Certificate cert = crearCertificado(username, clavePub,clavePriv);
+            char[] keystorePassword = co.getClave().toCharArray();
+            String alias = username + "mykey"; // Alias para identificar la clave en el KeyStore
+
+            KeyStore keyStore = KeyStore.getInstance("PKCS12");
 
             // Agregar la clave privada y la clave pública al KeyStore
-            keyStore.setKeyEntry(alias, clavePriv, keystorePassword, new java.security.cert.Certificate[]{});
+            keyStore.setKeyEntry(alias, clavePriv, keystorePassword, new java.security.cert.Certificate[]{cert});
+            keyStore.load(new FileInputStream("keystore.pfx"), keystorePassword);
 
-            // Guardar el KeyStore en un archivo
-            try (FileOutputStream fos = new FileOutputStream(username+"privateKey.jks")) {
-                keyStore.store(fos, keystorePassword);
-            }
         } catch (NoSuchAlgorithmException | CertificateException | KeyStoreException | IOException e) {
             throw new RuntimeException(e);
         }
 
 
     }
-    public String getClaveAsim(String username,String password){
+
+    public String getClaveAsim(String username, String password) {
         try {
             KeyStore keyStore = KeyStore.getInstance("JKS");
-            try (FileInputStream fis = new FileInputStream(username+"privateKey.jks")) {
+            try (FileInputStream fis = new FileInputStream(username + "privateKey.jks")) {
                 keyStore.load(fis, password.toCharArray());
             }
             Key key = keyStore.getKey(username, password.toCharArray());
             return key.toString();
-        }catch (NoSuchAlgorithmException | CertificateException | KeyStoreException | IOException e) {
+        } catch (NoSuchAlgorithmException | CertificateException | KeyStoreException | IOException e) {
             throw new RuntimeException(e);
         } catch (UnrecoverableKeyException e) {
             throw new RuntimeException(e);
         }
 
 
-
     }
 
-    public void crearCertificadoPublic(String username,String password){
+    public X509Certificate crearCertificado(String username, PublicKey clavePub,PrivateKey privateKey) {
+
 
         try {
-            Security.addProvider(new BouncyCastleProvider());
-            KeyPairGenerator keyGen = null; // Hace uso del provider BC
-            keyGen = KeyPairGenerator.getInstance("RSA");
-            keyGen.initialize(2048,new SecureRandom());  // tamano clave 512 bits
-            KeyPair clavesRSA = keyGen.generateKeyPair();
-            PrivateKey clavePrivada = clavesRSA.getPrivate();
-            PublicKey clavePublica = clavesRSA.getPublic();
-
-            // crear un certificado con CErtificateBuilder
-            X500Name owner = new X500Name("CN=Oscar");
-            X500Name issuer = new X500Name("CN=Servidor");
-            X509v3CertificateBuilder certGen = new X509v3CertificateBuilder(
-                    issuer,
-                    BigInteger.valueOf(1),
-                    new Date(),
-                    new Date(System.currentTimeMillis()+1000000),
-                    owner, SubjectPublicKeyInfo.getInstance(
-                    ASN1Sequence.getInstance(clavePublica.getEncoded()))
-
-            );
-        } catch (NoSuchAlgorithmException e) {
+            X509V3CertificateGenerator cert1 = new X509V3CertificateGenerator();
+            cert1.setIssuerDN(new X500Principal(username));
+            cert1.setSubjectDN(new X500Principal(username));
+            cert1.setPublicKey(clavePub);
+            cert1.setSignatureAlgorithm("SHA256WithRSAEncryption");
+            return cert1.generateX509Certificate(privateKey);
+        } catch (SignatureException | InvalidKeyException e) {
             throw new RuntimeException(e);
         }
-
-
     }
 }
