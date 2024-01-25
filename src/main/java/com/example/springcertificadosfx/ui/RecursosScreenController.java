@@ -1,7 +1,8 @@
 package com.example.springcertificadosfx.ui;
 
+import com.example.springcertificadosfx.UserCacheo;
 import com.example.springcertificadosfx.data.model.Recursos;
-import com.example.springcertificadosfx.servicios.UserServices;
+import com.example.springcertificadosfx.servicios.RecursosServices;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
@@ -13,6 +14,10 @@ public class RecursosScreenController {
 
 
     private final ApplicationContext context;
+    @FXML
+    private TextField passwRec;
+    @FXML
+    private TextField nombreRec;
     @FXML
     private TableView<Recursos> recursoTabla;
     @FXML
@@ -35,14 +40,17 @@ public class RecursosScreenController {
     @FXML
     private Label comprobarRecAviso;
 
-
-    public RecursosScreenController(ApplicationContext context) {
+    private final RecursosServices serv;
+    public RecursosScreenController(ApplicationContext context,  RecursosServices serv) {
         this.context = context;
 
+
+        this.serv = serv;
     }
 
 
     public void crearRecurso(ActionEvent event) {
+        serv.crearRecurso(nombreRec.getText(),passwRec.getText());
     }
 
     public void cambiarPassw(ActionEvent event) {

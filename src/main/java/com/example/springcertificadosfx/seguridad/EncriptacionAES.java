@@ -1,6 +1,7 @@
 package com.example.springcertificadosfx.seguridad;
 
 import com.google.common.primitives.Bytes;
+import org.springframework.stereotype.Component;
 
 import javax.crypto.Cipher;
 import javax.crypto.SecretKey;
@@ -13,7 +14,7 @@ import java.security.SecureRandom;
 import java.security.spec.KeySpec;
 import java.util.Arrays;
 import java.util.Base64;
-
+@Component
 public class EncriptacionAES implements Encriptacion {
     @Override
     public String encriptar(String textoToEncript, String clave) {

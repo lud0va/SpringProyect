@@ -1,7 +1,8 @@
 package com.example.springcertificadosfx.data.dao.crearClave;
 
+import com.example.springcertificadosfx.UserCacheo;
 import com.example.springcertificadosfx.common.Configuration;
-import com.example.springcertificadosfx.Utils;
+import com.example.springcertificadosfx.seguridad.Encriptacion;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.x509.X509V3CertificateGenerator;
 import org.springframework.stereotype.Repository;
@@ -22,37 +23,38 @@ import java.util.Date;
 @Repository
 public class DaoClavesCert {
     private final Configuration co;
+    private final UserCacheo cacheo;
+    private final Encriptacion en;
 
-
-    public DaoClavesCert(Configuration co) {
+    public DaoClavesCert(Configuration co, UserCacheo cacheo, Encriptacion en) {
 
         this.co = co;
+        this.cacheo = cacheo;
+        this.en = en;
     }
 
-    public void crearClaveAsim(String username, String passwrd) {
+    public void crearClavesDeUsuario(String username, String passwrd) {
         Security.addProvider(new BouncyCastleProvider());
 
         try {
             //generar claves privada y publica
-            KeyPairGenerator gen = KeyPairGenerator.getInstance(Utils.randomBytes());
+            KeyPairGenerator gen = KeyPairGenerator.getInstance("RSA");
             KeyPair claveBase64 = gen.generateKeyPair();
             PrivateKey clavePriv = claveBase64.getPrivate();
             PublicKey clavePub = claveBase64.getPublic();
             //generar certificado
             KeyStore keyStore = KeyStore.getInstance("PKCS12");
             char[] keystorePassword = co.getClave().toCharArray();
+            keyStore.load(new FileInputStream(co.getNombreKeystore()), keystorePassword);
 
             KeyStore.PasswordProtection pt = new KeyStore.PasswordProtection(co.getClave().toCharArray());
-
             KeyStore.PrivateKeyEntry privateKeyEntry = (KeyStore.PrivateKeyEntry) keyStore.getEntry(co.getServerName(), pt);
             PrivateKey privateKeyServidor = (PrivateKey) privateKeyEntry.getPrivateKey();
 
             X509Certificate cert = crearCertificado(username, clavePub, privateKeyServidor);
 
 
-
             // Agregar la clave privada y la clave pública al KeyStore
-            keyStore.load(new FileInputStream(co.getNombreKeystore()), keystorePassword);
             keyStore.setCertificateEntry(username, cert);
             keyStore.setKeyEntry(username, clavePriv, passwrd.toCharArray(), new java.security.cert.Certificate[]{cert});
 
@@ -69,6 +71,32 @@ public class DaoClavesCert {
 
 
     }
+
+    public String EncriptarClaveRecursos(String nameRec, String passwRec) {
+
+        try {
+            //cargar la keystore
+            char[] keystorePassword = co.getClave().toCharArray();
+            KeyStore keyStore = KeyStore.getInstance("PKCS12");
+            keyStore.load(new FileInputStream(co.getNombreKeystore()), keystorePassword);
+            //coger la clave privada del usuario
+            KeyStore.PasswordProtection pt = new KeyStore.PasswordProtection(cacheo.getPassw().toCharArray());
+            KeyStore.PrivateKeyEntry privateKeyEntry = (KeyStore.PrivateKeyEntry) keyStore.getEntry(cacheo.getName(), pt);
+            PrivateKey privateKeyUsuario = (PrivateKey) privateKeyEntry.getPrivateKey();
+
+
+            //encriptar la contraseña del recurso con la clave privada del usuario
+
+             return  en.encriptar(passwRec,privateKeyUsuario.toString());
+        } catch (UnrecoverableEntryException | CertificateException | KeyStoreException | IOException |
+                 NoSuchAlgorithmException e) {
+            throw new RuntimeException(e);
+        }
+
+
+    }
+
+
 
     public String getClaveAsim(String username, String password) {
         try {
@@ -93,8 +121,8 @@ public class DaoClavesCert {
         try {
             X509V3CertificateGenerator cert1 = new X509V3CertificateGenerator();
             cert1.setSerialNumber(BigInteger.valueOf(1));
-            cert1.setIssuerDN(new X500Principal(username));
-            cert1.setSubjectDN(new X500Principal(username));
+            cert1.setIssuerDN(new X500Principal("CN=" + username));
+            cert1.setSubjectDN(new X500Principal("CN=" + username));
             cert1.setPublicKey(clavePub);
             cert1.setNotBefore(
                     Date.from(LocalDate.now().plus(365, ChronoUnit.DAYS).atStartOfDay().toInstant(ZoneOffset.UTC)));

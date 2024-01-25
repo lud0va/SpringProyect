@@ -3,7 +3,6 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-
 <AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.springcertificadosfx.ui.RecursosScreenController">
    <children>
       <TableView fx:id="recursoTabla" layoutX="39.0" layoutY="65.0" prefHeight="200.0" prefWidth="200.0">
@@ -12,11 +11,13 @@
           <TableColumn fx:id="nameRec" prefWidth="95.0" text="Name" />
         </columns>
       </TableView>
-      <Button fx:id="crearRecurso" layoutX="277.0" onAction="#crearRecurso" layoutY="88.0" mnemonicParsing="false" text="Crear Recurso" />
-      <Button fx:id="cambiarPasswRec" layoutX="277.0" onAction="#cambiarPassw" layoutY="187.0" mnemonicParsing="false" text="Cambiar contraseña de recurso" />
-      <Button fx:id="comprobarRec" layoutX="277.0" onAction="#comprobarRec" layoutY="276.0" mnemonicParsing="false" text="Comprobar recurso" />
+      <Button fx:id="crearRecurso" layoutX="290.0" layoutY="214.0" mnemonicParsing="false" onAction="#crearRecurso" text="Crear Recurso" />
+      <Button fx:id="cambiarPasswRec" layoutX="216.0" layoutY="318.0" mnemonicParsing="false" onAction="#cambiarPassw" text="Cambiar contraseña de recurso" />
+      <Button fx:id="comprobarRec" layoutX="39.0" layoutY="318.0" mnemonicParsing="false" onAction="#comprobarRec" text="Comprobar recurso" />
       <Label fx:id="recCreated" layoutX="277.0" layoutY="65.0" prefHeight="17.0" prefWidth="58.0" />
-      <Label fx:id="cambiarRecAviso" layoutX="277.0" layoutY="165.0" prefHeight="17.0" prefWidth="135.0" text="Haz click en un recurso" />
+      <Label fx:id="cambiarRecAviso" layoutX="238.0" layoutY="300.0" prefHeight="17.0" prefWidth="135.0" text="Haz click en un recurso" />
       <Label fx:id="comprobarRecAviso" layoutX="277.0" layoutY="256.0" prefHeight="17.0" prefWidth="90.0" />
+      <TextField fx:id="nombreRec" layoutX="277.0" layoutY="120.0" promptText="nombre recurso" />
+      <TextField fx:id="passwRec" layoutX="277.0" layoutY="165.0" promptText="Contraseña de recurso" />
    </children>
 </AnchorPane>

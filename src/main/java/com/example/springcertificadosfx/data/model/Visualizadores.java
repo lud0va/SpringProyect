@@ -16,7 +16,9 @@ public class Visualizadores {
     @Column(name = "nombre", nullable = false)
     private String nombre;
 
-
+    @ManyToOne
+    @JoinColumn(name = "id_recursos")
+    private Recursos users;
 
 
 
