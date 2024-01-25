@@ -1,12 +1,11 @@
 package com.example.springcertificadosfx.servicios;
 
-import com.example.springcertificadosfx.Configuration;
+import com.example.springcertificadosfx.common.Configuration;
 import com.example.springcertificadosfx.UserCacheo;
 import com.example.springcertificadosfx.data.dao.UserDao;
 import com.example.springcertificadosfx.data.dao.crearClave.DaoClavesCert;
 import com.example.springcertificadosfx.data.model.Users;
-import jakarta.inject.Inject;
-import org.springframework.security.core.userdetails.User;
+
 import org.springframework.stereotype.Service;
 
 @Service
@@ -18,7 +17,7 @@ public class UserServices {
 
     private UserCacheo uc;
 
-    @Inject
+
     public UserServices(UserDao dao, DaoClavesCert daoAsim, Configuration co) {
         this.dao = dao;
         this.daoAsim = daoAsim;

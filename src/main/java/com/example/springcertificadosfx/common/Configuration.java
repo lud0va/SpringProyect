@@ -1,4 +1,4 @@
-package com.example.springcertificadosfx;
+package com.example.springcertificadosfx.common;
 
 import javafx.fxml.FXMLLoader;
 import lombok.Getter;
@@ -14,7 +14,8 @@ import java.util.Properties;
 @Getter
 public class Configuration {
     private String clave;
-
+    private String nombreKeystore;
+    private String serverName;
 
 
     public Configuration() {
@@ -22,7 +23,8 @@ public class Configuration {
             Properties p = new Properties();
             p.loadFromXML(Configuration.class.getClassLoader().getResourceAsStream("config/claveKeystore.xml"));
             this.clave = p.getProperty("clave");
-
+            this.nombreKeystore=p.getProperty("keystoreName");
+            this.serverName=p.getProperty("serverName");
         } catch (IOException e) {
             throw new IllegalStateException(e);
         }

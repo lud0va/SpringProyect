@@ -6,7 +6,6 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface VisualizadoresDao extends ListCrudRepository<Visualizadores,Long> {
-  @Override
-  public Visualizadores save(Visualizadores entity);
+
 
 }

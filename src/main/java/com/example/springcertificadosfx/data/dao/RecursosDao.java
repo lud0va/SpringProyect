@@ -7,6 +7,5 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface RecursosDao extends ListCrudRepository<Recursos,Long> {
 
-    @Override
-    Recursos save(Recursos entity);
+
 }
