@@ -9,6 +9,7 @@ import org.springframework.stereotype.Repository;
 
 import javax.security.auth.x500.X500Principal;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.math.BigInteger;
@@ -71,30 +72,30 @@ public class DaoClavesCert {
 
 
     }
-
-    public String EncriptarClaveRecursos(String nameRec, String passwRec) {
+    public  String firmar(String passw){
 
         try {
-            //cargar la keystore
+            KeyStore    keyStore = KeyStore.getInstance("PKCS12");
             char[] keystorePassword = co.getClave().toCharArray();
-            KeyStore keyStore = KeyStore.getInstance("PKCS12");
             keyStore.load(new FileInputStream(co.getNombreKeystore()), keystorePassword);
-            //coger la clave privada del usuario
             KeyStore.PasswordProtection pt = new KeyStore.PasswordProtection(cacheo.getPassw().toCharArray());
             KeyStore.PrivateKeyEntry privateKeyEntry = (KeyStore.PrivateKeyEntry) keyStore.getEntry(cacheo.getName(), pt);
             PrivateKey privateKeyUsuario = (PrivateKey) privateKeyEntry.getPrivateKey();
 
 
-            //encriptar la contraseña del recurso con la clave privada del usuario
-
-             return  en.encriptar(passwRec,privateKeyUsuario.toString());
-        } catch (UnrecoverableEntryException | CertificateException | KeyStoreException | IOException |
-                 NoSuchAlgorithmException e) {
+            Signature sign = Signature.getInstance("SHA256WithRSA");
+            sign.initSign(privateKeyUsuario);
+            sign.update(passw.getBytes());
+            byte[] firma = sign.sign();
+            return firma.toString();
+        } catch (KeyStoreException | UnrecoverableEntryException | CertificateException | IOException |
+                 NoSuchAlgorithmException | SignatureException | InvalidKeyException e) {
             throw new RuntimeException(e);
         }
 
-
     }
+
+
 
 
 

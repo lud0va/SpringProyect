@@ -68,4 +68,16 @@ public class EncriptacionAES implements Encriptacion {
         }
         return null;
     }
+
+    @Override
+    public String encriptarAsim(String passw, String clave) {
+        return null;
+    }
+
+    @Override
+    public String desencriptarAsim(String passw, String clave) {
+        return null;
+    }
+
+
 }
