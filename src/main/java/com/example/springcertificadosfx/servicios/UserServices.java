@@ -36,7 +36,7 @@ public class UserServices {
 
         if (co.createPasswordEncoder().matches(passw, user.getPassword())) {
             uc.setName(user.getUsername());
-            uc.setPassw(user.getPassword());
+            uc.setPassw(passw);
             return true;
 
         }

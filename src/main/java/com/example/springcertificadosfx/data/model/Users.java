@@ -1,7 +1,9 @@
 package com.example.springcertificadosfx.data.model;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 
@@ -10,6 +12,8 @@ import lombok.Setter;
 @Getter
 @Setter
 @Table(name = "users")
+@AllArgsConstructor
+@NoArgsConstructor
 public class Users {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -26,7 +30,5 @@ public class Users {
         this.password = password;
     }
 
-    public Users() {
 
-    }
 }
