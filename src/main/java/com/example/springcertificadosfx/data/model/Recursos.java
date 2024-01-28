@@ -34,5 +34,7 @@ public class Recursos {
         this.firma=firma;
     }
 
-
+    public Recursos(int id_recursos) {
+        this.id_recursos = id_recursos;
+    }
 }

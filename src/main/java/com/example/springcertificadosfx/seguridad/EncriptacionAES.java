@@ -10,6 +10,7 @@ import javax.crypto.spec.PBEKeySpec;
 import javax.crypto.spec.SecretKeySpec;
 import java.io.DataInputStream;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.security.*;
@@ -17,6 +18,7 @@ import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.KeySpec;
+import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
 import java.util.Arrays;
 import java.util.Base64;
@@ -98,24 +100,45 @@ public class EncriptacionAES implements Encriptacion {
             // Devolver la contraseña cifrada como una cadena en formato base64
             return java.util.Base64.getEncoder().encodeToString(encryptedBytes);
 
-        } catch (NoSuchAlgorithmException | NoSuchPaddingException | IOException  |
-                 InvalidKeyException e) {
-            throw new RuntimeException(e);
-        } catch (IllegalBlockSizeException e) {
-            throw new RuntimeException(e);
-        } catch (KeyStoreException e) {
-            throw new RuntimeException(e);
-        } catch (BadPaddingException e) {
-            throw new RuntimeException(e);
-        } catch (CertificateException e) {
+        } catch (NoSuchAlgorithmException | NoSuchPaddingException | IOException | InvalidKeyException |
+                 IllegalBlockSizeException | KeyStoreException | BadPaddingException | CertificateException e) {
             throw new RuntimeException(e);
         }
 
     }
 
     @Override
-    public String desencriptarAsim(String passw, String clave) {
-        return null;
+    public String desencriptarAsim(String username, String clave,String userpassw) {
+        try {
+            //cargar keystore para coger clave privada
+
+            KeyStore keystore = KeyStore.getInstance("PKCS12");
+            keystore.load(new FileInputStream(co.getNombreKeystore()), co.getClave().toCharArray());
+            KeyStore.PasswordProtection pt = new KeyStore.PasswordProtection(userpassw.toCharArray());
+            KeyStore.PrivateKeyEntry privateKeyEntry = (KeyStore.PrivateKeyEntry) keystore.getEntry(username, pt);
+            PrivateKey privateKeyUsuario = (PrivateKey) privateKeyEntry.getPrivateKey();
+            //iniciar cifrador en modo decrypt metiendo clavepriv de usuario
+            Cipher cifrador = Cipher.getInstance("RSA");
+            cifrador.init(Cipher.DECRYPT_MODE, privateKeyUsuario);
+
+            byte[] claveEncriptadaBytes = Base64.getDecoder().decode(clave);
+            byte[] claveDesencriptadaBytes = cifrador.doFinal(claveEncriptadaBytes);
+
+            String claveDesencriptada = new String(claveDesencriptadaBytes, StandardCharsets.UTF_8);
+            return claveDesencriptada;
+        } catch (CertificateException | KeyStoreException | IOException | NoSuchAlgorithmException |
+                UnrecoverableEntryException e) {
+            throw new RuntimeException(e);
+        } catch (NoSuchPaddingException e) {
+            throw new RuntimeException(e);
+        } catch (InvalidKeyException e) {
+            throw new RuntimeException(e);
+        } catch (IllegalBlockSizeException e) {
+            throw new RuntimeException(e);
+        } catch (BadPaddingException e) {
+            throw new RuntimeException(e);
+        }
+
     }
 
 

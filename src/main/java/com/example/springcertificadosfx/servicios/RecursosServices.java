@@ -12,6 +12,8 @@ import com.example.springcertificadosfx.data.model.Visualizadores;
 import com.example.springcertificadosfx.seguridad.Encriptacion;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class RecursosServices {
     private final RecursosDao dao;
@@ -27,7 +29,8 @@ public class RecursosServices {
 
     private final UserCacheo cacheo;
 
-    public RecursosServices(RecursosDao dao, UserDao usDao, VisualizadoresDao visDao, DaoClavesCert claves, Configuration co, Encriptacion encriptacion, UserCacheo cacheo) {
+    private final VisualizadoresServices visServ;
+    public RecursosServices(RecursosDao dao, UserDao usDao, VisualizadoresDao visDao, DaoClavesCert claves, Configuration co, Encriptacion encriptacion, UserCacheo cacheo, VisualizadoresServices visServ) {
         this.dao = dao;
         this.usDao = usDao;
         this.visDao = visDao;
@@ -35,6 +38,21 @@ public class RecursosServices {
         this.co = co;
         this.encriptacion = encriptacion;
         this.cacheo = cacheo;
+        this.visServ = visServ;
+    }
+
+    public void cambiarPasswRecurso( String nombreRec,String newPassw){
+        Visualizadores visTienePassw = visDao.findByNombre(cacheo.getName()).get();
+        String claveRandom = encriptacion.desencriptarAsim(cacheo.getName(), visTienePassw.getClaveAsim(), cacheo.getPassw());
+        Recursos recurso=dao.findByNombre(nombreRec).get();
+        String passw=encriptacion.encriptar(newPassw,claveRandom);
+        recurso.setPassword(passw);
+        dao.save(recurso);
+        visDao.findAllByRecursos(recurso).get().forEach(vis->{
+            visServ.compartirRecurso(vis.getNombre(),recurso.getId_recursos());
+        });
+
+
     }
 
     public void crearRecurso(String nameRec, String passwRec) {
@@ -51,4 +69,9 @@ public class RecursosServices {
 
 
     }
+    public List<Recursos> getAll(){
+       return dao.findAll();
+    }
+
+
 }

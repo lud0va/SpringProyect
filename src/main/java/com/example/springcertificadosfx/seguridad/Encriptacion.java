@@ -7,5 +7,5 @@ public interface Encriptacion {
 
     String encriptarAsim(String username,String clave);
 
-    String desencriptarAsim(String passw,String clave);
+    String desencriptarAsim(String username,String clave,String pasww);
 }
