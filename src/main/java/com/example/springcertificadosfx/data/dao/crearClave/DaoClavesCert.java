@@ -19,6 +19,7 @@ import java.security.cert.X509Certificate;
 import java.time.LocalDate;
 import java.time.ZoneOffset;
 import java.time.temporal.ChronoUnit;
+import java.util.Base64;
 import java.util.Date;
 
 @Repository
@@ -72,6 +73,34 @@ public class DaoClavesCert {
 
 
     }
+    public boolean comprobarFirma(String username,String passw,String firma){
+        try {
+            KeyStore keystore = KeyStore.getInstance("PKCS12");
+            keystore.load(new FileInputStream(co.getNombreKeystore()), co.getClave().toCharArray());
+            // Obtener la clave pública del certificado utilizando el alias
+            X509Certificate cert = (X509Certificate) keystore.getCertificate(username);
+            PublicKey publicKey = cert.getPublicKey();
+
+            Signature verify=Signature.getInstance("SHA256WithRSA");
+            verify.initVerify(publicKey);
+            verify.update(passw.getBytes());
+            return verify.verify(Base64.getDecoder().decode(firma));
+        } catch (NoSuchAlgorithmException e) {
+            throw new RuntimeException(e);
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException(e);
+        } catch (CertificateException e) {
+            throw new RuntimeException(e);
+        } catch (KeyStoreException e) {
+            throw new RuntimeException(e);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        } catch (InvalidKeyException e) {
+            throw new RuntimeException(e);
+        } catch (SignatureException e) {
+            throw new RuntimeException(e);
+        }
+    }
     public  String firmar(String passw){
 
         try {
@@ -87,7 +116,7 @@ public class DaoClavesCert {
             sign.initSign(privateKeyUsuario);
             sign.update(passw.getBytes());
             byte[] firma = sign.sign();
-            return firma.toString();
+            return Base64.getEncoder().encodeToString(firma) ;
         } catch (KeyStoreException | UnrecoverableEntryException | CertificateException | IOException |
                  NoSuchAlgorithmException | SignatureException | InvalidKeyException e) {
             throw new RuntimeException(e);

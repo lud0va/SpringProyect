@@ -15,6 +15,7 @@ import org.springframework.web.context.annotation.ApplicationScope;
 @ApplicationScope
 @Scope("singleton")
 public class UserCacheo {
+    int id;
     String name;
     String passw;
 

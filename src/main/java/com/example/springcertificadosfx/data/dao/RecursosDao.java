@@ -11,4 +11,5 @@ import java.util.Optional;
 public interface RecursosDao extends ListCrudRepository<Recursos,Long> {
 
     Optional<Recursos> findByNombre(String nombre);
+
 }

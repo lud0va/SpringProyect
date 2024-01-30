@@ -59,6 +59,7 @@ public class RecursosScreenController {
     }
 
     public void cargarCosas() {
+        recursoTabla.getItems().clear();
         idRec.setCellValueFactory(new PropertyValueFactory<>("id_recursos"));
         nameRec.setCellValueFactory(new PropertyValueFactory<>("nombre"));
         recursoTabla.getItems().addAll(serv.getAll());
@@ -66,6 +67,7 @@ public class RecursosScreenController {
 
     public void crearRecurso(ActionEvent event) {
         serv.crearRecurso(nombreRec.getText(), passwRec.getText());
+        cargarCosas();
     }
 
     public void cambiarPassw(ActionEvent event) {
@@ -73,6 +75,15 @@ public class RecursosScreenController {
     }
 
     public void comprobarRec(ActionEvent event) {
+        try {
+    if (servVis.comprobarRecurso(nombreVis.getText(),recursoTabla.getSelectionModel().getSelectedItem().getNombre())){
+        recCreated.setText("recurso Valido");
+    }else {
+        recCreated.setText("recurso invalido");
+    }
+        }catch (NullPointerException n){
+            recCreated.setText("selecciona un recurso");
+        }
     }
 
     public void compartirRecurso(ActionEvent event) {

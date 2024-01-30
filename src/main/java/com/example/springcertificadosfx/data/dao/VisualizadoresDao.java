@@ -13,6 +13,9 @@ import java.util.Optional;
 public interface VisualizadoresDao extends ListCrudRepository<Visualizadores,Long> {
 
     Optional<Visualizadores> findByNombre(String nombre);
+    Optional<Visualizadores> findById(int id);
+    Optional<Visualizadores> findByNombreAndAndRecursos(String nombre,Recursos rec);
+
     boolean existsByNombre(String nombre);
 
     Optional<List<Visualizadores>> findAllByRecursos(Recursos recursos);

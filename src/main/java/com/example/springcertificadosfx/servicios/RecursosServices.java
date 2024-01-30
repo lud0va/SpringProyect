@@ -30,6 +30,7 @@ public class RecursosServices {
     private final UserCacheo cacheo;
 
     private final VisualizadoresServices visServ;
+
     public RecursosServices(RecursosDao dao, UserDao usDao, VisualizadoresDao visDao, DaoClavesCert claves, Configuration co, Encriptacion encriptacion, UserCacheo cacheo, VisualizadoresServices visServ) {
         this.dao = dao;
         this.usDao = usDao;
@@ -41,15 +42,16 @@ public class RecursosServices {
         this.visServ = visServ;
     }
 
-    public void cambiarPasswRecurso( String nombreRec,String newPassw){
-        Visualizadores visTienePassw = visDao.findByNombre(cacheo.getName()).get();
+    public void cambiarPasswRecurso(String nombreRec, String newPassw) {
+        Recursos recurso = dao.findByNombre(nombreRec).get();
+        Visualizadores visTienePassw = visDao.findByNombreAndAndRecursos(cacheo.getName(), recurso).get();
         String claveRandom = encriptacion.desencriptarAsim(cacheo.getName(), visTienePassw.getClaveAsim(), cacheo.getPassw());
-        Recursos recurso=dao.findByNombre(nombreRec).get();
-        String passw=encriptacion.encriptar(newPassw,claveRandom);
+
+        String passw = encriptacion.encriptar(newPassw, claveRandom);
         recurso.setPassword(passw);
         dao.save(recurso);
-        visDao.findAllByRecursos(recurso).get().forEach(vis->{
-            visServ.compartirRecurso(vis.getNombre(),recurso.getId_recursos());
+        visDao.findAllByRecursos(recurso).get().forEach(vis -> {
+            visServ.compartirRecurso(vis.getNombre(), recurso.getId_recursos());
         });
 
 
@@ -62,15 +64,16 @@ public class RecursosServices {
         String passwEncript = encriptacion.encriptar(passwRec, randomKey);
 
 
-
         dao.save(new Recursos(nameRec, passwEncript, firma));
-       String claveVis= encriptacion.encriptarAsim(cacheo.getName(),randomKey);
-       visDao.save(new Visualizadores(cacheo.getName(),claveVis,dao.findByNombre(nameRec).get()));
+        String claveVis = encriptacion.encriptarAsim(cacheo.getName(), randomKey);
+        Recursos rec = dao.findByNombre(nameRec).get();
+        visDao.save(new Visualizadores(cacheo.getName(), claveVis, rec));
 
 
     }
-    public List<Recursos> getAll(){
-       return dao.findAll();
+
+    public List<Recursos> getAll() {
+        return dao.findAll();
     }
 
 
